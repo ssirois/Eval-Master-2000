@@ -1,0 +1,87 @@
+<?php
+  
+/**
+* Imp of hook_menu
+*/
+  
+function dimitric_formation_menu () {
+  $items = array();
+    
+  $items['formation/dimitric'] = array(
+    'title' => "10mitri",
+    'description' => 'Formation de 10mitri',
+    'page callback' => 'dimitric_formation_page_content',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  return $items;
+}
+
+/**
+*callback for my page
+*/
+
+function dimitric_formation_page_content () {
+  $output = drupal_get_form('kt_eval_koumbit');
+  return $output;
+}
+
+  
+/**
+ * A form!
+ */
+function kt_eval_koumbit ($form_state) {
+  $echelle = array(
+  1 => 'pas d accord du tout',
+  2 => 'pas completement d accord',
+  3 => 'un peu d accord',
+  4 => 'tout a fait d accord',
+);
+
+  $form = array();
+
+  $form['prix_q_1'] = array(
+    '#type' => 'radios',                                          
+    '#title' => t("12 - Le prix de cette formation est abordable"),
+    '#options' => $echelle,
+    '#required' => FALSE,
+);
+
+ $form['prix_q_2'] = array(
+    '#type' => 'radios',                                          
+    '#title' => t("13 - La formation vaut le prix"),
+    '#options' => $echelle,
+    '#required' => FALSE,
+);
+
+ $form['koumbit_q_1'] = array(
+    '#type' => 'radios',                                          
+    '#title' => t("14 - Je recommanderais cette formation à d'autres personnes"),
+    '#options' => $echelle,
+    '#required' => FALSE,
+);
+
+  $form['koumbit_q_2'] = array(
+    '#type' => 'radios',
+    '#title' => t("15 - J'aimerais participer à de futures activités chez Koumbit"),
+    '#options' => $echelle,
+    '#required' => FALSE,
+);
+
+  $form['koumbit_q_3'] = array(
+    '#type' => 'radios',
+    '#title' => t("16 - Je serais prêt à venir partager mes connaissances lors'ateliers ouverts"),
+    '#options' => $echelle,
+    '#required' => FALSE,
+);
+  $form['answer_id'] = array(
+    '#type' => 'textarea',
+    '#title' => t("17 - Quelles seraient les activités que vous aimeriez que Koumbit organise?"),
+    '#required' => FALSE,
+);
+
+
+  return $form;
+}
+

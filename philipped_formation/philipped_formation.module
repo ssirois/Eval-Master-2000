@@ -1,0 +1,72 @@
+<?php
+
+function philipped_formation_menu () {
+$items = array();
+
+$items['formation/philipped'] = array(
+    'title' => 'Phil',
+    'description' => 'Premier module',
+    'page callback' => 'kt_eval_test_get_data',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+return $items;
+}
+
+function philipped_formation_page_content () {
+return 'Ce qui doit être su.<br />Les signes diacritiques passent.';
+}
+
+function philipped_formation_form_sfyn_formation_blabla_alter(&$form, &$form_state) {
+  $form['passion']['#options']['nourriture'] = 'Ragoût de pattes';
+}
+
+/**
+* kt_eval
+*/
+
+function kt_eval_test_get_data() {
+ 
+	$result = db_query('describe kt_eval_test');
+	$output = '<ul>';
+	while ($row = db_fetch_array($result)) {
+	
+	  if ($row["Type"] == 'int(2)') {
+	    $output .= _kt_eval_test_get_average($row['Field']);
+	
+	  }
+	  
+	   elseif ($row["Type"] == 'varchar(256)' && $row['Field'] != "repondeur") {
+	    $output .= _kt_eval_test_get_text($row['Field']);
+	
+	  }
+	
+	
+	
+	// dsm ($row);
+	//$output .= "<li>{$row['apprentissage_q_5']}</li>";
+    }
+	$output .= '</ul>';
+	return $output;
+}
+
+function _kt_eval_test_get_average($champ = 'apprentissage_q_1', $formation = 'php') {
+ 
+	$result = db_query('SELECT AVG(%s) FROM {kt_eval_test} WHERE formation = "%s"', $champ, $formation);
+	$output = $champ . ' : ' . db_result($result) . '<br />';
+	return $output;
+}
+
+function _kt_eval_test_get_text($champ = 'apprentissage_q_5', $formation = 'php') {
+ 
+	$result = db_query('SELECT %s FROM {kt_eval_test} WHERE formation = "%s"', $champ, $formation);
+	
+	$output = '<ul>' . $champ;
+	while ($row = db_fetch_array($result)) {
+	$output .= "<li>{$row[$champ]}</li>";
+}
+	$output .= '</ul>';
+
+	return $output;
+}

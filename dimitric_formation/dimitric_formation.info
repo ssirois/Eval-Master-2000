@@ -1,0 +1,5 @@
+; $Id$
+name = 'dimitri training module'
+core = 6.x
+package = 'formation'
+

@@ -1,0 +1,73 @@
+<?php
+/**
+ * Imp of hook_menu
+*/
+
+function alaing_formation_menu () {
+  $items = array();
+
+  $items['formation/alaing'] = array(
+    'title' => 'Alain',
+    'description' => "Le module d'Alain",
+    'page callback' => 'alaing_formation_page_content',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Callback for my page
+*/
+function alaing_formation_page_content () {
+	$output = alaing_formation_get_data();
+	// $output .= drupal_get_form('alaing_formation_blabla');
+
+	return $output;
+}
+
+/**
+*  Go get data from the database
+*/
+
+function alaing_formation_get_data(){
+
+$result = db_query("SELECT name, type, status FROM system WHERE name LIKE 
+'%_formation'");
+
+     $output = '<table cellpadding=10 border=1>';
+     $output .= '<thead><tr><td>NAME</td><td>TYPE</td><td>STATUS</td></tr> </thead>';
+while ($row = db_fetch_array($result)) {
+    $output .= 
+"<tr><td>{$row['name']}</td><td>{$row['type']}</td><td>{$row['status']}</td></tr>";
+}
+     $output .= '</table>';
+return $output;
+}
+
+/*
+function alaing_formation_blabla ($form_state) {
+	$form = array();
+	
+	$form['title'] = array(
+	  '#type' => 'textfield', 
+	  '#title' => t('Subject'), 
+	  '#default_value' => $node->title, 
+	  '#size' => 60, 
+	  '#maxlength' => 128, 
+	  '#required' => TRUE,
+	);	
+	
+	return $form;
+}
+*/
+
+/**
+ * Example of form_alter usage
+ */
+function alaing_formation_form_sfyn_formation_blabla_alter(&$form, &$form_state) {
+  $form['passion']['#options']['code'] = 'PHP';
+
+}
+
