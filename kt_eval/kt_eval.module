@@ -53,16 +53,15 @@ function kt_eval_menu () {
  */
 function kt_eval_formas () {
   $result = db_query('SELECT name FROM {profile_fields} WHERE name LIKE "profile_forma_%"');
-  $output = '<ul>';
+  $items = array();
   while ($row = db_fetch_object($result)) {
     $formatch = array();
     preg_match('/_[^_]+$/', $row->name, $formatch);
     $forma = substr($formatch[0], 1);
     $forma_link = l($forma, "eval/$forma");
-    $output .= "<li>$forma_link</li>";
+    $items[] = $forma_link;
   }
-  $output .= '</ul>';
-  return $output;
+  return theme('item_list', $items, NULL, 'ul');
 }
 
 
@@ -75,7 +74,8 @@ function kt_eval_formas () {
 function kt_eval_access_by_training ($formation) {
   global $user;
 
-  $pr_field = "profile_forma_$formation";
+  // php
+  $pr_field = "profile_forma_$formation"; // profile_forma_php
   $fid = db_result(db_query('SELECT fid FROM {profile_fields} WHERE name = "%s"', $pr_field));
   if ($fid) {
     if (db_result(db_query('SELECT value FROM {profile_values} WHERE fid = %d AND uid = %d', $fid, $user->uid))) {
@@ -99,24 +99,54 @@ function kt_eval_access_by_training ($formation) {
  */
 function kt_eval_get_data ($formation) {
 
-  $state = array();
-
-  $form = drupal_retrieve_form('kt_eval_form', $state, $formation);
-
   $result = db_query('DESCRIBE {kt_eval}');
-  $output = '<ul>';
+  $data = array();
   while ($row = db_fetch_array($result)) {
-    $category = explode('_', $row['Field']);
-    $category = $category[0];
-    if ($row["Type"] == 'int(10) unsigned' && $row['Field'] != 'answer_id') { 
-      $output .= _kt_eval_get_average($row['Field'], $formation, $form[$category][$row['Field']]);
+   if ($row["Type"] == 'int(10) unsigned' && $row['Field'] != 'answer_id') { 
+      $data[$row['Field']] = _kt_eval_get_average($row['Field'], $formation);
     }
 
     elseif ($row["Type"] == 'longtext') {
-      $output .= _kt_eval_get_text($row['Field'], $formation, $form[$category][$row['Field']]);
+      $data[$row['Field']] = _kt_eval_get_text($row['Field'], $formation);
     }
   }
-  $output .= '</ul>';
+  return theme ('kt_eval_data', $data, 'kt_eval_form', $formation);
+}
+
+/**
+ * Imp of hook_theme
+ */
+function kt_eval_theme () {
+  return array(
+    'kt_eval_data' => array(
+      'arguments' => array('data' => array(), $form_id => 'kt_eval_form', $formation => NULL),
+    ),
+  );
+}
+
+/**
+ * Theme the report of evaluation results
+ *
+ * @param $data array
+ *   An associative array of column headers and their results
+ * @param $form_id
+ *   A form to construct to provide more human readable column names
+ * @param $formation
+ *   The name of the training
+ */
+
+function theme_kt_eval_data ($data = array(), $form_id, $formation) {
+  $state = array();
+  $form = drupal_retrieve_form($form_id, $state, $formation);
+  $output = "<dl>\n";
+  foreach ($data as $field => $value) {
+    $category = explode('_', $field);
+    $category = $category[0];
+    $output .= "<dt>{$form[$category][$field]['#title']}</dt>\n";
+    $output .= "<dd>$value</dd>\n";
+  }
+  $output .= '</dl>';
+
   return $output;
 }
 
@@ -127,13 +157,11 @@ function kt_eval_get_data ($formation) {
  *   The machine name of the field
  * @param $formation string
  *   The identifier of the training
- * @param $form_item array
- *   The question from the form constructor
  */
-function _kt_eval_get_average($champ = 'apprentissage_q_1', $formation = 'php', $form_item) {
+function _kt_eval_get_average($champ = 'apprentissage_q_1', $formation = 'php') {
 
   $result = db_query('SELECT AVG(%s) FROM {kt_eval} WHERE formation = "%s"', $champ, $formation);
-  $output = '<label>' . $form_item['#title'] . '</label><ul><li>' . db_result($result) . '</li></ul>';
+  $output = db_result($result);
   return $output;
 }
 
@@ -144,20 +172,17 @@ function _kt_eval_get_average($champ = 'apprentissage_q_1', $formation = 'php', 
  *   The machine name of the field
  * @param $formation string
  *   The identifier of the training
- * @param $form_item array
- *   The question from the form constructor
  */
-function _kt_eval_get_text($champ = 'apprentissage_q_5', $formation = 'php', $form_item) {
+function _kt_eval_get_text($champ = 'apprentissage_q_5', $formation = 'php') {
 
   $result = db_query('SELECT %s FROM {kt_eval} WHERE formation = "%s"', $champ, $formation);
 
-  $output = "<label>{$form_item['#title']}</label><ul>" ;
+  $items = array();
   while ($row = db_fetch_array($result)) {
-    $output .= "<li>{$row[$champ]}</li>";
+    $items[] = $row[$champ];
   }
-  $output .= '</ul>';
 
-  return $output;
+  return theme('item_list', $items, NULL, 'ul');
 }
 
 
