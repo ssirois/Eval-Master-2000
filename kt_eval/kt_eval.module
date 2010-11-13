@@ -110,29 +110,49 @@ function kt_eval_get_data ($formation) {
   $output = '<ul>';
   while ($row = db_fetch_array($result)) {
     if ($row["Type"] == 'int(10) unsigned' && $row['Field'] != 'answer_id') {
-      $output .= _kt_eval_get_average($row['Field']);
+      $output .= _kt_eval_get_average($row['Field'], $formation, $form[$row['Field']]);
     }
 
     elseif ($row["Type"] == 'longtext') {
-      $output .= _kt_eval_get_text($row['Field']);
+      $output .= _kt_eval_get_text($row['Field'], $formation, $form[$row['Field']]);
     }
   }
   $output .= '</ul>';
   return $output;
 }
 
-function _kt_eval_get_average($champ = 'apprentissage_q_1', $formation = 'php') {
+/**
+ * Helper function to retrieve average of numerical evaluation fields
+ *
+ * @param $champ string
+ *   The machine name of the field
+ * @param $formation string
+ *   The identifier of the training
+ * @param $form_item array
+ *   The question from the form constructor
+ */
+function _kt_eval_get_average($champ = 'apprentissage_q_1', $formation = 'php', $form_item) {
 
   $result = db_query('SELECT AVG(%s) FROM {kt_eval} WHERE formation = "%s"', $champ, $formation);
-  $output = $champ . ' : ' . db_result($result) . '<br />';
+  $output = '<label>' . $form_item['#title'] . '</label><ul><li>' . db_result($result) . '</li></ul>';
   return $output;
 }
 
-function _kt_eval_get_text($champ = 'apprentissage_q_5', $formation = 'php') {
+/**
+ * Helper function to retrieve a concat of textual fields
+ *
+ * @param $champ string
+ *   The machine name of the field
+ * @param $formation string
+ *   The identifier of the training
+ * @param $form_item array
+ *   The question from the form constructor
+ */
+function _kt_eval_get_text($champ = 'apprentissage_q_5', $formation = 'php', $form_item) {
 
   $result = db_query('SELECT %s FROM {kt_eval} WHERE formation = "%s"', $champ, $formation);
 
-  $output = '<ul>' . $champ;
+  $output = "<label>{$form_item['#title']}</label><ul>" ;
   while ($row = db_fetch_array($result)) {
     $output .= "<li>{$row[$champ]}</li>";
   }
