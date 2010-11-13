@@ -77,9 +77,8 @@ function kt_eval_access_by_training ($formation) {
 
   $pr_field = "profile_forma_$formation";
   $fid = db_result(db_query('SELECT fid FROM {profile_fields} WHERE name = "%s"', $pr_field));
-  drupal_set_message ("fid was $fid");
   if ($fid) {
-    if (db_result(db_query('SELECT value FROM {profile_values} WHERE fid = %d AND uid = %d', $fid, $user->uid)) || $user->uid == 1) {
+    if (db_result(db_query('SELECT value FROM {profile_values} WHERE fid = %d AND uid = %d', $fid, $user->uid))) {
       return TRUE;
     }
     else {
@@ -99,8 +98,6 @@ function kt_eval_access_by_training ($formation) {
  *   A string corresponding to the formation we want
  */
 function kt_eval_get_data ($formation) {
-
-  drupal_set_message("formation was $formation");
 
   $state = array();
 
