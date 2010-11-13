@@ -106,12 +106,14 @@ function kt_eval_get_data ($formation) {
   $result = db_query('DESCRIBE {kt_eval}');
   $output = '<ul>';
   while ($row = db_fetch_array($result)) {
-    if ($row["Type"] == 'int(10) unsigned' && $row['Field'] != 'answer_id') {
-      $output .= _kt_eval_get_average($row['Field'], $formation, $form[$row['Field']]);
+    $category = explode('_', $row['Field']);
+    $category = $category[0];
+    if ($row["Type"] == 'int(10) unsigned' && $row['Field'] != 'answer_id') { 
+      $output .= _kt_eval_get_average($row['Field'], $formation, $form[$category][$row['Field']]);
     }
 
     elseif ($row["Type"] == 'longtext') {
-      $output .= _kt_eval_get_text($row['Field'], $formation, $form[$row['Field']]);
+      $output .= _kt_eval_get_text($row['Field'], $formation, $form[$category][$row['Field']]);
     }
   }
   $output .= '</ul>';
@@ -167,170 +169,204 @@ function kt_eval_display_form ($formation) {
 }
 
 function kt_eval_form ($form_state, $formation) {
- global $user;
+  global $user;
 
-$hashed_mail = md5($user->mail);
+  $hashed_mail = md5($user->mail);
+  $default_values = db_fetch_object(db_query('SELECT * FROM {kt_eval} WHERE repondeur = "%s"', $hashed_mail));
 
-$form = array();
-  
-$echelle = array(
-   1 => t("pas d'accord du tout"),
-   2 => t("pas completement d'accord"),
-   3 => t("d'accord"),
-   4 => t("tout a fait d'accord"),
- ); 
- 
-// Form 
+  $form = array();
+    
+  $echelle = array(
+     1 => t("pas d'accord du tout"),
+     2 => t("pas completement d'accord"),
+     3 => t("d'accord"),
+     4 => t("tout a fait d'accord"),
+   ); 
+   
+  // Form 
+  $form['#tree'] = FALSE;
 
-// Hidden
+  // Hidden
 
-$form['repondeur'] = array(
-  '#type' => 'hidden',
-  '#value' => $hashed_mail,
- );
+  $form['repondeur'] = array(
+    '#type' => 'hidden',
+    '#value' => $hashed_mail,
+   );
 
-$form['formation'] = array(
-  '#type' => 'hidden',
-  '#value' => $formation,
- );
+  $form['formation'] = array(
+    '#type' => 'hidden',
+    '#value' => $formation,
+   );
 
-//Question #1
-
-$form ['apprentissage_q_1']= array(
-'#type' => 'radios',
-'#title' => t("1- Je suis pret a me servir des outils et concepts dans cette formation"),
-'#options' => $echelle,                           
+  $form['apprentissage'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Votre apprentissage'),
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE
   );
 
-//Question #2
-
-$form ['apprentissage_q_2']= array(
-'#type' => 'radios',
-'#title' => t("2- La formation etait bien adaptee a mon rythme d'apprentissage"),
-'#options' => $echelle,                           
-  );
-  
-//Question #3
-
-$form ['apprentissage_q_3']= array(
-'#type' => 'radios',
-'#title' => t("3- J'ai pu pleinement participer aux exercices et discussions"),
-'#options' => $echelle,                           
+  //Question #1
+  $form['apprentissage']['apprentissage_q_1']= array(
+    '#type' => 'radios',
+    '#title' => t("1- Je suis pret a me servir des outils et concepts dans cette formation"),
+    '#options' => $echelle,
+    '#default_value' => $default_values->apprentissage_q_1,
   );
 
-//Question #4
-
-$form ['apprentissage_q_4']= array(
-'#type' => 'radios',
-'#title' => t("4- Je me suis sentie a l'aise dans cette formation"),
-'#options' => $echelle,                           
+  //Question #2
+  $form['apprentissage']['apprentissage_q_2']= array(
+    '#type' => 'radios',
+    '#title' => t("2- La formation etait bien adaptee a mon rythme d'apprentissage"),
+    '#options' => $echelle,
+    '#default_value' => $default_values->apprentissage_q_2,
   );
   
-//Question #5
-
-$form ['apprentissage_q_5']= array(
-'#type' => 'textarea',
-'#title' => t("5- Qu'avez vous le plus apprecie dans cette formation?"),
+  //Question #3
+  $form['apprentissage']['apprentissage_q_3']= array(
+    '#type' => 'radios',
+    '#title' => t("3- J'ai pu pleinement participer aux exercices et discussions"),
+    '#options' => $echelle,                           
+    '#default_value' => $default_values->apprentissage_q_3,
   );
 
-//Question #6
-
-$form ['apprentissage_q_6']= array(
-'#type' => 'textarea',
-'#title' => t("6- Qu'avez vous le moins apprecie dans cette formation?"),
+  //Question #4
+  $form['apprentissage']['apprentissage_q_4']= array(
+    '#type' => 'radios',
+    '#title' => t("4- Je me suis sentie a l'aise dans cette formation"),
+    '#options' => $echelle,                           
+    '#default_value' => $default_values->apprentissage_q_4,
   );
-  
+    
+  //Question #5
+  $form['apprentissage']['apprentissage_q_5']= array(
+    '#type' => 'textarea',
+    '#title' => t("5- Qu'avez vous le plus apprecie dans cette formation?"),
+    '#default_value' => $default_values->apprentissage_q_5,
+  );
+
+  //Question #6
+  $form['apprentissage']['apprentissage_q_6']= array(
+    '#type' => 'textarea',
+    '#title' => t("6- Qu'avez vous le moins apprecie dans cette formation?"),
+    '#default_value' => $default_values->apprentissage_q_6,
+  );
+
+  $form['formateur'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Formateur'),
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE
+  );
+
   // Question #7
-
-$form ['formateur_q_1']= array(
-'#type' => 'radios',
-'#title' => t("7- J'avais confiance dans les competences du formateur"),
-'#options' => $echelle,                             
-);
-  
+  $form['formateur']['formateur_q_1']= array(
+    '#type' => 'radios',
+    '#title' => t("7- J'avais confiance dans les competences du formateur"),
+    '#options' => $echelle,                             
+    '#default_value' => $default_values->formateur_q_1,
+  );
+    
   // Question #8
-  
-$form ['formateur_q_2']= array(
-'#type' => 'radios',
-'#title' => t('8- Le formateur a ouvert suffisamment de temps aux questions et a la discussion'),
-'#options' => $echelle,                           
-);
- 
+  $form['formateur']['formateur_q_2']= array(
+    '#type' => 'radios',
+    '#title' => t('8- Le formateur a ouvert suffisamment de temps aux questions et a la discussion'),
+    '#options' => $echelle,                       
+    '#default_value' => $default_values->formateur_q_2,
+  );
+   
   // Question #9
-  
-$form ['formateur_q_3']= array(
-'#type' => 'radios',
-'#title' => t('9- Le formateur a su communiquer ses idees de maniere claire et comprehensible'),
-'#options' => $echelle,                              
-);
+  $form['formateur']['formateur_q_3']= array(
+    '#type' => 'radios',
+    '#title' => t('9- Le formateur a su communiquer ses idees de maniere claire et comprehensible'),
+    '#options' => $echelle,                           
+    '#default_value' => $default_values->formateur_q_3,
+  );
 
   // Question #10
-  
-$form ['formateur_q_4']= array(
-'#type' => 'radios',
-'#title' => t('10- Les supports didactiques (documentation, references, graphiques) ont favorise mon apprentissage'),
-'#options' => $echelle,                              
-);
+  $form['formateur']['formateur_q_4']= array(
+    '#type' => 'radios',
+    '#title' => t('10- Les supports didactiques (documentation, references, graphiques) ont favorise mon apprentissage'),
+    '#options' => $echelle,                           
+    '#default_value' => $default_values->formateur_q_4,
+  );
 
 
   // Question #11
-  
-$form ['formateur_q_5']= array(
-'#type' => 'textarea',
-'#title' => t('11- Avez vous des suggestions pour le formateur?'),
-'#rows' => 5,                       
-);
+  $form['formateur']['formateur_q_5']= array(
+    '#type' => 'textarea',
+    '#title' => t('11- Avez vous des suggestions pour le formateur?'),
+    '#rows' => 5,                       
+    '#default_value' => $default_values->formateur_q_5,
+  );
+
+  $form['prix'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Le prix'),
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE
+  );
 
   // Question #12
-  $form['prix_q_1'] = array(
+  $form['prix']['prix_q_1'] = array(
     '#type' => 'radios',                                          
     '#title' => t("12 - Le prix de cette formation est abordable"),
     '#options' => $echelle,
     '#required' => FALSE,
-);
+    '#default_value' => $default_values->prix_q_1,
+  );
 
   // Question #13
-
- $form['prix_q_2'] = array(
+  $form['prix']['prix_q_2'] = array(
     '#type' => 'radios',                                          
     '#title' => t("13 - La formation vaut le prix"),
     '#options' => $echelle,
     '#required' => FALSE,
-);
+    '#default_value' => $default_values->prix_q_2,
+  );
+
+  $form['koumbit'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Koumbit à votre service'),
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE
+  );
 
   // Question #14
-
- $form['koumbit_q_1'] = array(
+  $form['koumbit']['koumbit_q_1'] = array(
+      '#prefix' => t('Présentement, Koumbit offre plusieurs activités, dont des formations, des 5@7 thèmatiques, et bien sur nos assemblées générales. Nous bloguons régulièrement sur des sujets techniques et sociaux à travers !membres.', array(
+      '!membres' => l('membres.koumbit.org', 'http://membres.koumbit.org'),
+    )),
     '#type' => 'radios',                                          
     '#title' => t("14 - Je recommanderais cette formation a d'autres personnes"),
     '#options' => $echelle,
     '#required' => FALSE,
-);
+    '#default_value' => $default_values->koumbit_q_1,
+  );
 
   // Question #15
-
-  $form['koumbit_q_2'] = array(
+  $form['koumbit']['koumbit_q_2'] = array(
     '#type' => 'radios',
     '#title' => t("15 - J'aimerais participer a de futures activites chez Koumbit"),
     '#options' => $echelle,
     '#required' => FALSE,
-);
+    '#default_value' => $default_values->koumbit_q_2,
+  );
 
   // Question #16
-
-  $form['koumbit_q_3'] = array(
+  $form['koumbit']['koumbit_q_3'] = array(
     '#type' => 'radios',
     '#title' => t("16 - Je serais pret a venir partager mes connaissances lors d'ateliers ouverts"),
     '#options' => $echelle,
     '#required' => FALSE,
+    '#default_value' => $default_values->koumbit_q_3
 );
 
   // Question #17
-
-  $form['koumbit_q_4'] = array(
+  $form['koumbit']['koumbit_q_4'] = array(
     '#type' => 'textarea',
     '#title' => t("17 - Quelles seraient les activites que vous aimeriez que Koumbit organise"),
     '#required' => FALSE,
+    '#default_value' => $default_values->koumbit_q_4
 );
 
   $form['submit'] = array(
