@@ -71,9 +71,9 @@ projects[zen] = "2.1"
 ;****************************************
 
 projects[php_dev][type] = "profile"
-projects[php_dev][download][type] = "get"
-projects[php_dev][download][url] = "http://git.koumbit.net/?p=formation/2010_php.git;a=blob_plain;f=profiles/php_dev/php_dev.profile;hb=master"
-projects[php_dev][download][directory_name] = "php_dev"
+projects[php_dev][download][type] = "git"
+projects[php_dev][download][url] = "git://git.koumbit.net/formation/2010_php.git"
+projects[php_dev][download][branch] = "master"
 
 ;****************************************
 ; End
