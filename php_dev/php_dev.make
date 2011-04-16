@@ -67,5 +67,14 @@ projects[adaptivetheme] = "2.2"
 projects[zen] = "2.1"
 
 ;****************************************
+; Install Profile
+;****************************************
+
+projects[php_dev][type] = "profile"
+projects[php_dev][download][type] = "get"
+projects[php_dev][download][url] = "http://git.koumbit.net/?p=formation/2010_php.git;a=blob_plain;f=profiles/php_dev/php_dev.profile;hb=master"
+projects[php_dev][download][directory_name] = "php_dev"
+
+;****************************************
 ; End
 ;****************************************

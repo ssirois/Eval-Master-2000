@@ -6,7 +6,7 @@
  *   An array of modules to enable.
  */
 function php_dev_profile_modules() {
-  return array('color', 'comment', 'help', 'menu', 'taxonomy', 'dblog', 'openid', 'upload', 'admin_menu', 'views', 'views_ui', 'content', 'text', 'optionwidgets', 'fieldgroup', 'number', 'openid', 'openidadmin', 'devel', 'features', 'path');
+  return array('comment', 'help', 'menu', 'taxonomy', 'dblog', 'openid', 'upload', 'admin_menu', 'views', 'views_ui', 'content', 'text', 'optionwidgets', 'fieldgroup', 'number', 'openid', 'openidadmin', 'devel', 'features', 'path', 'bueditor');
 }
 
 /**
