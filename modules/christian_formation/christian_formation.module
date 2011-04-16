@@ -1,0 +1,28 @@
+<?php
+/**
+* Fnord.
+*/
+
+function christian_formation_menu () {
+    $items = array();
+
+    $items['formation/christian'] = array (
+        'title' => "Formation de Christian",
+        'description' => 'Ma formation',
+        'page callback' => 'christian_formation_page_content',
+        'access arguments' => array('access content'),
+        'type' => MENU_NORMAL_ITEM,
+);
+
+    return $items;
+}
+
+/****
+* Fonction christian_formation_page_content. $commentaire_redondant=TRUE;
+*/
+
+function christian_formation_page_content () {
+    return 'Une phrase amusante et spirituelle.';
+}
+
+

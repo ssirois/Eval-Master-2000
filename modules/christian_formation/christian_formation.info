@@ -1,0 +1,4 @@
+name = 'le module de Christian'
+core = 6.x
+package = 'Formation'
+description = 'Das schoenste hier aud erden ist lieben und gelibt zu werden.'

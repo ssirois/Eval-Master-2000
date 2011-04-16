@@ -1,0 +1,4 @@
+name = 'Le module de Myriam'
+core = 6.x
+package = "Formation"
+description = "Un premier module dans la formation Drupal + php"

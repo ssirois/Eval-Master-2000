@@ -1,0 +1,18 @@
+<?php
+  function sds_formation_menu () {
+    $items = array();
+
+    $items['formation/sds'] = array(
+      'title' => 'Formation de sds',
+      'description' => 'Ma formation',
+      'page callback' => 'sds_formation_page_content',
+      'access arguments' => array('access content'),
+      'type' => MENU_NORMAL_ITEM
+    );
+
+    return $items;
+  }
+
+  function sds_formation_page_content () {
+    return 'Hello World! ... Or is it?';
+  }

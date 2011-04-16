@@ -1,0 +1,4 @@
+name = 'Module de Pierre'
+core = 6.x
+package = 'Formation'
+description = 'Mon ti module de rien du tout'

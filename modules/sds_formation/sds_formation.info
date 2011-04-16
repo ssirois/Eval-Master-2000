@@ -1,0 +1,3 @@
+name = 'Le module de sds'
+core = 6.x
+package = 'Formation'

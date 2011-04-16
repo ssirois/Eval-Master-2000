@@ -1,0 +1,4 @@
+name = 'Le module de Sofian'
+core = 6.x
+package = 'Formation'
+description = 'La la la la toute la journée'

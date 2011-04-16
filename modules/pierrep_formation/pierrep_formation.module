@@ -1,0 +1,19 @@
+<?php
+function pierrep_formation_menu () {
+  $items = array();
+
+  $items['formation/pierrep'] = array(
+    'title' => "Formation de pierrep",
+    'description' => 'Ma tite formation',
+    'page callback' => 'pierrep_formation_page_content',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+function pierrep_formation_page_content()
+{
+  
+  return 'ma pier....foncton';
+}

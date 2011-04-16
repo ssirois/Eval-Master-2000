@@ -1,0 +1,3 @@
+name = 'le module de doudou'
+core = 6.x
+package = 'Formation'
