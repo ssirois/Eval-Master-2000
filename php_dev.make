@@ -70,10 +70,10 @@ projects[zen] = "2.1"
 ; Install Profile
 ;****************************************
 
-projects[php_dev][type] = "profile"
-projects[php_dev][download][type] = "git"
-projects[php_dev][download][url] = "git://git.koumbit.net/formation/2010_php.git"
-projects[php_dev][download][branch] = "master"
+;projects[php_dev][type] = "profile"
+;projects[php_dev][download][type] = "git"
+;projects[php_dev][download][url] = "git://git.koumbit.net/formation/2010_php.git"
+;projects[php_dev][download][branch] = "master"
 
 ;****************************************
 ; End
