@@ -1,4 +1,0 @@
-; $Id$
-name = "sfyn's training module"
-core = 6.x
-package = 'formation'

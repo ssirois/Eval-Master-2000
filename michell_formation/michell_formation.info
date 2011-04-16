@@ -1,5 +1,0 @@
-; $Id$
-name = "mon premier module!"
-core = 6.x
-package = 'formation'
-

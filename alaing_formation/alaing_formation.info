@@ -1,6 +1,0 @@
-; $Id$
-name = "Al training module"
-core = 6.x
-package = 'formation'
-
-
