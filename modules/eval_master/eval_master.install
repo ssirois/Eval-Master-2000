@@ -1,0 +1,126 @@
+<?php
+
+/**
+ * Implements hook_schema
+ */
+
+function eval_master_schema() {
+  $eval_master_schema = array();
+  
+  $eval_master_schema['eval_master_evaluation'] = array(
+    'description' => 'Contient les evaluations',
+    'fields' => array(
+      'eval_id'=> array(
+        'description' => 'primary key',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'cours' =>  array(
+        'description' => 'Le nom du cours.',
+        'type' => 'varchar',
+        'length' => 256,
+        'not null' => TRUE,
+        'default' => '',
+      ),     
+      'uid' => array(
+        'description' => "Numero de l'utilisateur",
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0, 
+      ),  
+    ),
+    'primary key' => array('eval_id'),
+    'indexes' => array(
+      'uid' => array('uid'),
+    ),
+  );
+
+  $eval_master_schema['eval_master_answer'] = array(
+    'description' => 'Réponses',
+    'fields' => array(
+      'answer_id' => array(
+        'description' => 'Primary key',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        ),
+      'eval_id' => array(
+        'description' => 'Evaluation',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'question_id' => array(
+        'description' => 'Question',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'value' => array(
+        'description' => 'La réponse en soi',
+        'type' => 'text',
+        'not null' => TRUE,
+        'default' => '',
+      ),
+    ),
+    'indexes' => array(
+      'eval_id' => array('eval_id'),
+      'question_id' => array('question_id'),
+    ),
+    'primary key' => array('answer_id'),
+  );
+
+  $eval_master_schema['eval_master_question'] = array(
+    'description' => 'Questions',
+    'primary key' => array('question_id'),
+    'fields' => array(
+      'question_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'category' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => 512,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+
+    ),
+  );
+
+ 
+  return $eval_master_schema; 
+}
+
+/**
+ * Implements hook_install
+ */
+
+function eval_master_install() {
+  drupal_install_schema('eval_master');
+}
+
+/**
+ * Implements hook_uninstall
+ */
+
+function eval_master_uninstall() {
+  drupal_uninstall_schema('eval_master');
+}

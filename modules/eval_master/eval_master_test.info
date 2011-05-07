@@ -1,0 +1,4 @@
+name = 'Eval Master 2000 test'
+core = 6.x
+package = 'Formation'
+description = "Module d'evaluations des formations"

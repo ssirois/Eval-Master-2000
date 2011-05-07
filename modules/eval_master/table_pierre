@@ -1,0 +1,29 @@
+$eval_master_schema['eval_master_question'] = array(
+  'description' => 'Questions',
+  'fields' => array(
+    'question_id' => array(
+      'type' => 'serial',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+    ),
+    'category' => array(
+      'type' => 'varchar',
+      'length' => 64,
+      'not null' => TRUE,
+      'default' => '',
+    ),
+    'label' => array(
+      'type' => 'varchar',
+      'length' => 512,
+      'not null' => TRUE,
+      'default' => '',
+    ),
+    'type' => array(
+      'type' => 'varchar',
+      'length' => 64,
+      'not null' => TRUE,
+      'default' => '',
+    ),
+
+  ),
+);

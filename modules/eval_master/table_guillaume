@@ -1,0 +1,36 @@
+$eval_master_schema['eval_master_answer'] array(
+  'description' => 'Réponses',
+  'fields' => array(
+    'answer_id' => array(
+      'description' => 'Primary key',
+      'type' => 'serial',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+    ),
+    'eval_id' => array(
+      'description' => 'Evaluation',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ),
+    'question_id' => array(
+      'description' => 'Question',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ),
+    'value' => array(
+      'description' => 'La réponse en soi',
+      'type' => 'text',
+      'not null' => TRUE,
+      'default' => '',
+    ),
+  ),
+  'indexes' => array(
+    'eval_id' = array('eval_id'),
+    'question_id' = array('question_id'),
+  ),
+  'primary key' => array('answer_id'),
+);
