@@ -6,10 +6,11 @@
 function eval_master_menu () { 
   $items = array();
 
-  $items['formation/master_eval'] = array(
+  $items['formation/eval_master'] = array(
     'title' => "Eval Master", 
     'description' => 'Course evaluation module, with forms',
-    'page callback' => 'eval_master_page_content',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('eval_master_evaluation_form'),
     'access arguments' => array('access content'),
     'type' => MENU_NORMAL_ITEM,
   );
@@ -19,6 +20,51 @@ function eval_master_menu () {
 /**
  * Page callback
  */
-function eval_master_page_content () {
-  return 'Constater Return page callback';  /*  Ce que la page va afficher  */
+function eval_master_evaluation_form($form_state) {
+  $form = array();
+	
+  $form['QuestionTest'] = _eval_master_create_long_answer_element(t('Titre de la question'));
+  
+  $form['QuestionTest2'] = _eval_master_create_multiple_choice_element(t('Titre de la question RADIO'));
+  
+  $form['submit'] = array(	
+    '#type' => 'submit',
+    '#value' => t('Enregistrer Test'),
+  );
+  return $form;
+}
+
+function _eval_master_create_long_answer_element($label) {
+  $long_answer_element = array(
+    '#type' => 'textarea',
+    '#title' => $label,
+    '#size' => 60,
+    '#maxlength' => 64,
+  );
+  return $long_answer_element;
+}
+
+function _eval_master_create_multiple_choice_element($label) {
+  $multiple_choice_element = array(
+    '#type' => 'radios',
+    '#title' => $label,
+    '#options' => _eval_master_get_choices(),
+  );
+  return $multiple_choice_element;
+}
+
+function _eval_master_get_choices() {
+  $choices = array(1 => t("pas d'accord du tout"), 2 => t("pas completement d'accord"), 3 => t("d'accord"), 4 => t("tout a fait d'accord"));
+  
+  return $choices;
+}
+
+function eval_master_evaluation_form_validate($form, &$form_state) {
+  if (is_numeric($form_state['values']['QuestionTest'])) {
+    form_set_error('QuestionTest', t('ERREUR'));
+  }
+}
+
+function eval_master_evaluation_form_submit ($form, &$form_state) {
+  drupal_set_message(t('BRAVO'));
 }
