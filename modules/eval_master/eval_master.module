@@ -21,16 +21,40 @@ function eval_master_menu () {
  * Page callback
  */
 function eval_master_evaluation_form($form_state) {
+  $questions = _eval_master_get_questions();
+
+  $form = _eval_master_get_evaluation_form($questions);
+
+  return $form;
+}
+
+function _eval_master_get_questions() {
+  $current_page = 0;
+  $page_length = 100;
+  $query_questions = 'SELECT * FROM {eval_master_question} LIMIT ' . $current_page . ', ' . $page_length;
+
+  return db_query($query_questions);
+}
+
+function _eval_master_get_evaluation_form($questions) {
   $form = array();
-	
-  $form['QuestionTest'] = _eval_master_create_long_answer_element(t('Titre de la question'));
-  
-  $form['QuestionTest2'] = _eval_master_create_multiple_choice_element(t('Titre de la question RADIO'));
+
+  while ($next_question = db_fetch_array($questions)) {
+    switch($next_question['type']) {
+      case 'long_answer':
+        $form[$next_question['question_id']] = _eval_master_create_long_answer_element(t($next_question['label']));
+        break;
+      case 'multiple_choice':
+        $form[$next_question['question_id']] = _eval_master_create_multiple_choice_element(t($next_question['label']));
+        break;
+    }
+  }
   
   $form['submit'] = array(	
     '#type' => 'submit',
     '#value' => t('Enregistrer Test'),
   );
+
   return $form;
 }
 
