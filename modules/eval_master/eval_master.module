@@ -150,7 +150,7 @@ function _eval_master_create_multiple_choice_element($label) {
     '#type' => 'radios',
     '#title' => $label,
     '#options' => _eval_master_get_choices(),
-    '#required' => true,
+    '#required' => FALSE,
   );
   return $multiple_choice_element;
 }
@@ -159,7 +159,7 @@ function _eval_master_create_multiple_choice_element($label) {
  * Return the choices for multiple choice questions
  */
 function _eval_master_get_choices() {
-  $choices = array(1 => t("pas d'accord du tout"), 2 => t("pas completement d'accord"), 3 => t("d'accord"), 4 => t("tout a fait d'accord"));
+  $choices = array(0 => t("Aucune de ces réponses"),1 => t("pas d'accord du tout"), 2 => t("pas completement d'accord"), 3 => t("d'accord"), 4 => t("tout a fait d'accord"));
   
   return $choices;
 }
