@@ -99,7 +99,7 @@ function _eval_master_get_evaluation_form($questions) {
         '#title' => t($next_question['category']),
         '#collapsible' => TRUE,
         '#collapsed' => FALSE,
-        '#tree' => FALSE;
+        '#tree' => FALSE,
       );
     }
 
