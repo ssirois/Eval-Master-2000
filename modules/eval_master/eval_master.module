@@ -21,12 +21,56 @@ function eval_master_menu () {
  * Page callback
  */
 function eval_master_evaluation_form($form_state) {
-  $questions = _eval_master_get_questions();
-  $form = _eval_master_get_evaluation_form($questions);
 
-  return $form;
+  if (_eval_master_evaluation_already_completed()) {
+    drupal_set_message(t('Vous avez déjà complété l\'évaluation de la formation PHP et Drupal 6.'));
+    return null;
+  }
+  else {
+    $questions = _eval_master_get_questions();
+    $form = _eval_master_get_evaluation_form($questions);
+
+    return $form;
+  }
 }
 
+/**
+ * Check if the evaluation has already been submitted by a user
+ */
+function _eval_master_evaluation_already_completed() {
+  $evaluation_unique_id = _eval_master_get_evaluation_unique_id();
+  return _eval_master_evaluation_exists($evaluation_unique_id);
+}
+
+/**
+ * Get the users unique_id
+ */
+function _eval_master_get_evaluation_unique_id() {
+  global $user;
+  return $user->uid;
+}
+
+/**
+ * Check if an evaluation exists for a given uid
+ *
+ * @param $unique_id
+ *   A unique user id
+ */
+function _eval_master_evaluation_exists($unique_id) {
+  $limit = 1;
+  $query_evaluation = 'SELECT uid FROM {eval_master_evaluation} WHERE uid = ' . $unique_id . ' LIMIT ' . $limit;
+
+  if (db_result(db_query($query_evaluation)) === false) {
+    return false;
+  }
+  else {
+    return true;
+  }
+}
+
+/**
+ * Get questions from the database
+ */
 function _eval_master_get_questions() {
   $current_page = 0;
   $page_length = 100;
@@ -36,6 +80,12 @@ function _eval_master_get_questions() {
   return db_query($query_questions);
 }
 
+/**
+ * Generate the appropriate $form elements based on a mysql result
+ *
+ * @param $questions
+ *   A raw mysql result resource containing information about the questions
+ */
 function _eval_master_get_evaluation_form($questions) {
   $form = array();
 
@@ -44,8 +94,9 @@ function _eval_master_get_evaluation_form($questions) {
       $form[$next_question['category']] = array(
         '#type' => 'fieldset',
         '#title' => t($next_question['category']),
-        '#collapsible' => true,
-        '#collapsed' => false,
+        '#collapsible' => TRUE,
+        '#collapsed' => FALSE,
+        '#tree' => FALSE;
       );
     }
 
@@ -55,6 +106,9 @@ function _eval_master_get_evaluation_form($questions) {
         break;
       case 'multiple_choice':
         $form[$next_question['category']]['question_' . $next_question['question_id']] = _eval_master_create_multiple_choice_element(t($next_question['label']));
+        break;
+      default:
+        drupal_set_message('Unknown question resource in _eval_master_get_evaluation_form.');
         break;
     }
   }
@@ -67,6 +121,14 @@ function _eval_master_get_evaluation_form($questions) {
   return $form;
 }
 
+/**
+ * Helper function to create long-form questions
+ *
+ * @param $question_id
+ *   Does nothing
+ * @param $label
+ *   The question string
+ */
 function _eval_master_create_long_answer_element($question_id, $label) {
   $long_answer_element = array(
     '#type' => 'textarea',
@@ -77,44 +139,62 @@ function _eval_master_create_long_answer_element($question_id, $label) {
   return $long_answer_element;
 }
 
+/**
+ * Helper function to create multiple-choice questions
+ *
+ * @param $label
+ *   The question string
+ */
 function _eval_master_create_multiple_choice_element($label) {
   $multiple_choice_element = array(
     '#type' => 'radios',
     '#title' => $label,
     '#options' => _eval_master_get_choices(),
-    //'#required' => true,
+    '#required' => true,
   );
   return $multiple_choice_element;
 }
 
+/**
+ * Return the choices for multiple choice questions
+ */
 function _eval_master_get_choices() {
   $choices = array(1 => t("pas d'accord du tout"), 2 => t("pas completement d'accord"), 3 => t("d'accord"), 4 => t("tout a fait d'accord"));
   
   return $choices;
 }
 
+/**
+ * Validate function for the evaluations
+ * TODO actually use this for something
+ */
 function eval_master_evaluation_form_validate($form, &$form_state) {
   if (is_numeric($form_state['values']['QuestionTest'])) {
     form_set_error('QuestionTest', t('ERREUR'));
   }
 }
 
+/**
+ * Submit function for the evaluations
+ */
 function eval_master_evaluation_form_submit ($form, &$form_state) {
-  global $user;
   $question_ids = _eval_master_filter_received_question_ids($form_state['values']);
-  $evaluation = array('cours' => 'PHP et Drupal 6',  'uid' => $user->uid);
+  $evaluation = array('cours' => 'PHP et Drupal 6',  'uid' => _eval_master_get_evaluation_unique_id());
   drupal_write_record('eval_master_evaluation', $evaluation);
   foreach($question_ids as $question) {
     $answer = array('eval_id' => $evaluation['eval_id'], 'question_id' => $question, 'value' => $form_state['values']['question_' . $question]);
     drupal_write_record('eval_master_answer', $answer);
-    dsm($answer);
   }
   drupal_set_message(t('BRAVO'));
 }
 
+/**
+ * Pull only the question answers out of submitted form values
+ */
 function _eval_master_filter_received_question_ids($received_values) {
   $question_ids = array_filter(array_keys($received_values), '_eval_master_is_question_element');
 
+  // Remove prefixes from ids
   for($question_iterator = 0; $question_iterator < count($question_ids); $question_iterator++) {
     $current_question_id = $question_ids[$question_iterator];
     $question_ids[$question_iterator] = substr($current_question_id, strpos($current_question_id, '_') + 1);
@@ -123,6 +203,10 @@ function _eval_master_filter_received_question_ids($received_values) {
   return $question_ids;
 }
 
+/**
+ * Check if a given value identifies a question in the evaluation form
+ */
 function _eval_master_is_question_element($element) {
+  // Check of the element id starts with "question_"
   return (strpos($element, 'question_') === 0);
 }
