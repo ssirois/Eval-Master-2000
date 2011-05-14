@@ -1,5 +1,8 @@
 <?php
-// $Id$
+
+// include analysis function
+include_once('eval_master.analysis.inc');
+
 /**
  * Implementation of hook_menu
  */
