@@ -51,10 +51,10 @@ function _eval_master_get_evaluation_form($questions) {
 
     switch($next_question['type']) {
       case 'long_answer':
-        $form[$next_question['category']][$next_question['question_id']] = _eval_master_create_long_answer_element(t($next_question['label']));
+        $form[$next_question['category']]['question_' . $next_question['question_id']] = _eval_master_create_long_answer_element($next_question['question_id'], t($next_question['label']));
         break;
       case 'multiple_choice':
-        $form[$next_question['category']][$next_question['question_id']] = _eval_master_create_multiple_choice_element(t($next_question['label']));
+        $form[$next_question['category']]['question_' . $next_question['question_id']] = _eval_master_create_multiple_choice_element(t($next_question['label']));
         break;
     }
   }
@@ -67,7 +67,7 @@ function _eval_master_get_evaluation_form($questions) {
   return $form;
 }
 
-function _eval_master_create_long_answer_element($label) {
+function _eval_master_create_long_answer_element($question_id, $label) {
   $long_answer_element = array(
     '#type' => 'textarea',
     '#title' => $label,
@@ -82,6 +82,7 @@ function _eval_master_create_multiple_choice_element($label) {
     '#type' => 'radios',
     '#title' => $label,
     '#options' => _eval_master_get_choices(),
+    //'#required' => true,
   );
   return $multiple_choice_element;
 }
@@ -99,5 +100,29 @@ function eval_master_evaluation_form_validate($form, &$form_state) {
 }
 
 function eval_master_evaluation_form_submit ($form, &$form_state) {
+  global $user;
+  $question_ids = _eval_master_filter_received_question_ids($form_state['values']);
+  $evaluation = array('cours' => 'PHP et Drupal 6',  'uid' => $user->uid);
+  drupal_write_record('eval_master_evaluation', $evaluation);
+  foreach($question_ids as $question) {
+    $answer = array('eval_id' => $evaluation['eval_id'], 'question_id' => $question, 'value' => $form_state['values']['question_' . $question]);
+    drupal_write_record('eval_master_answer', $answer);
+    dsm($answer);
+  }
   drupal_set_message(t('BRAVO'));
+}
+
+function _eval_master_filter_received_question_ids($received_values) {
+  $question_ids = array_filter(array_keys($received_values), '_eval_master_is_question_element');
+
+  for($question_iterator = 0; $question_iterator < count($question_ids); $question_iterator++) {
+    $current_question_id = $question_ids[$question_iterator];
+    $question_ids[$question_iterator] = substr($current_question_id, strpos($current_question_id, '_') + 1);
+  }
+
+  return $question_ids;
+}
+
+function _eval_master_is_question_element($element) {
+  return (strpos($element, 'question_') === 0);
 }
