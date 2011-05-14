@@ -1,0 +1,17 @@
+INSERT INTO eval_master_question (category, label, type) VALUES ("Votre apprentissage", "Je suis pret a me servir des outils et concepts dans cette formation:", 'multiple_choice');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Votre apprentissage", "La formation était bien adaptée à mon rythme d'apprentissage:", 'multiple_choice');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Votre apprentissage", "J'ai pu pleinement participer aux exercices et discussions:", 'multiple_choice');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Votre apprentissage", "Je me suis sentie à l'aise dans cette formation:", 'multiple_choice');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Votre apprentissage", "Qu'avez vous le plus apprécie dans cette formation?:", 'long_answer');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Votre apprentissage", "Qu'avez vous le moins apprécié dans cette formation?:", 'long_answer');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Formateur", "J'avais confiance dans les compétences du formateur:", 'multiple_choice');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Formateur", "Le formateur a ouvert suffisamment de temps aux questions et à la discussion:", 'multiple_choice');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Formateur", "Le formateur a su communiquer ses idees de maniere claire et comprehensible:", 'multiple_choice');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Formateur", "Les supports didactiques (documentation, références, graphiques) ont favorisé mon apprentissage:", 'multiple_choice');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Formateur", "Avez vous des suggestions pour le formateur?:", 'long_answer');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Le prix", "Le prix de cette formation est abordable:", 'multiple_choice');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Le prix", "La formation vaut le prix:", 'multiple_choice');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Koumbit à votre service", "Je recommanderais cette formation à d'autres personnes:", 'multiple_choice');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Koumbit à votre service", "J'aimerais participer à de futures activités chez Koumbit:", 'multiple_choice');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Koumbit à votre service", "Je serais prêt à venir partager mes connaissances lors d'ateliers ouverts:", 'multiple_choice');
+INSERT INTO eval_master_question (category, label, type) VALUES ("Koumbit à votre service", "Quelles seraient les activités que vous aimeriez que Koumbit organise:", 'long_answer');
