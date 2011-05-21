@@ -62,7 +62,7 @@ function _eval_master_get_evaluation_unique_id() {
  */
 function _eval_master_evaluation_exists($unique_id) {
   $limit = 1;
-  $query_evaluation = 'SELECT uid FROM {eval_master_evaluation} WHERE uid = ' . $unique_id . ' LIMIT ' . $limit;
+  $query_evaluation = 'SELECT uid FROM {eval_master_evaluation} WHERE uid = \'' . $unique_id . '\' LIMIT ' . $limit;
 
   if (db_result(db_query($query_evaluation)) === false) {
     return false;
