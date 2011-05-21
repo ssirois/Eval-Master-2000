@@ -47,11 +47,11 @@ function _eval_master_evaluation_already_completed() {
 
 /**
  * Get the users unique_id
- * TODO: Transform in order to avoid using global variable 
+ * TODO: We need to use something else than two informations available in the DB for real anonymous evaluation.
  */
 function _eval_master_get_evaluation_unique_id() {
   global $user;
-  return $user->uid;
+  return md5($user->uid . $user->mail);
 }
 
 /**
