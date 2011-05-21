@@ -17,6 +17,17 @@ function eval_master_menu () {
     'access arguments' => array('access content'),
     'type' => MENU_NORMAL_ITEM,
   );
+
+  $menu_items['formation/eval_master_analysis'] = array(
+    'title' => "Analysis",
+    'description' => 'Results',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('eval_master_analysis_form'),
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+
   return $menu_items;
 }
 

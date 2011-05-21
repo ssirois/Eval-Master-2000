@@ -9,7 +9,7 @@ function eval_master_analysis_form() {
 
   // Create an array of themed questions
   while ($question = db_fetch_array($questions)) {
-    if ($question['type'] == '') { // If question is a multiple choice question
+    if ($question['type'] == 'multiple_choice') { // If question is a multiple choice question
       $raw_answers = _eval_master_analysis_get_answers($question);
 
       $average = _eval_master_analysis_get_average($answers);
@@ -17,7 +17,7 @@ function eval_master_analysis_form() {
       $clean_answers = array($average);
     }
     else { // Otherwise, it is a long answer question
-      $clean_answers = _eval_master_analyis_get_answers($question, 10);
+      $clean_answers = _eval_master_analysis_get_answers($question, 10);
     }
   
     // Use builtin theme function to get unordered list from $clean_answers,
@@ -28,7 +28,7 @@ function eval_master_analysis_form() {
   }
   
   // Use builtin theme function to get ordered list from $questions_list
-  $themed_questions_list = NULL;
+  $themed_questions_list = theme('item_list', $raw_questions_list, 'analysis', 'ol');
 
   $form['questions'] = array(
     '#value' => $themed_questions_list,
@@ -47,7 +47,15 @@ function eval_master_analysis_form() {
  * @return an array containing only the answers
  */
 function _eval_master_analysis_get_answers($question, $limit = 200){
-
+  $sql = 'SELECT * FROM {eval_master_answer} WHERE question_id = %d LIMIT %d';
+  $sql_result = db_query($sql, $question, $limit);
+  $survey_results = array();
+  
+  while($row = db_fetch_array($sql_results)) {
+    $survey_results[] = $row['value'];
+  }
+ 
+  return $survey_results; 
 }
 
 /**
@@ -59,5 +67,9 @@ function _eval_master_analysis_get_answers($question, $limit = 200){
  * @return integer value representing the average of all the values in $answers
  */
 function _eval_master_analysis_get_average($answers){
-
+  $total = 0;
+  foreach($answers as $answer) {
+    $total += $answer;
+  }
+  return $total / count($answers);
 }
