@@ -7,9 +7,9 @@ include_once('eval_master.analysis.inc');
  * Implementation of hook_menu
  */
 function eval_master_menu () { 
-  $items = array();
+  $menu_items = array();
 
-  $items['formation/eval_master'] = array(
+  $menu_items['formation/eval_master'] = array(
     'title' => "Eval Master", 
     'description' => 'Course evaluation module, with forms',
     'page callback' => 'drupal_get_form',
@@ -17,7 +17,7 @@ function eval_master_menu () {
     'access arguments' => array('access content'),
     'type' => MENU_NORMAL_ITEM,
   );
-  return $items;
+  return $menu_items;
 }
 
 /**
@@ -47,6 +47,7 @@ function _eval_master_evaluation_already_completed() {
 
 /**
  * Get the users unique_id
+ * TODO: Transform in order to avoid using global variable 
  */
 function _eval_master_get_evaluation_unique_id() {
   global $user;
