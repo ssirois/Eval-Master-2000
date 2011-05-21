@@ -129,16 +129,15 @@ function _eval_master_get_evaluation_form($questions, $answers = array()) {
         '#collapsible' => TRUE,
         '#collapsed' => FALSE,
         '#tree' => FALSE,
-        '#default_value' => $answers[$next_question['question_id']]['value'],
       );
     }
 
     switch($next_question['type']) {
       case 'long_answer':
-        $form[$next_question['category']]['question_' . $next_question['question_id']] = _eval_master_create_long_answer_element($next_question['question_id'], t($next_question['label']));
+        $form[$next_question['category']]['question_' . $next_question['question_id']] = _eval_master_create_long_answer_element($next_question['question_id'], t($next_question['label']), $answers[$next_question['question_id']]['value']);
         break;
       case 'multiple_choice':
-        $form[$next_question['category']]['question_' . $next_question['question_id']] = _eval_master_create_multiple_choice_element(t($next_question['label']));
+        $form[$next_question['category']]['question_' . $next_question['question_id']] = _eval_master_create_multiple_choice_element(t($next_question['label']), $answers[$next_question['question_id']]['value']);
         break;
       default:
         drupal_set_message('Unknown question resource in _eval_master_get_evaluation_form.');
@@ -161,13 +160,16 @@ function _eval_master_get_evaluation_form($questions, $answers = array()) {
  *   Does nothing
  * @param $label
  *   The question string
+ * @param $default
+ *   The default value
  */
-function _eval_master_create_long_answer_element($question_id, $label) {
+function _eval_master_create_long_answer_element($question_id, $label, $default) {
   $long_answer_element = array(
     '#type' => 'textarea',
     '#title' => $label,
     '#size' => 60,
     '#maxlength' => 64,
+    '#default_value' => $default,
   );
   return $long_answer_element;
 }
@@ -178,12 +180,13 @@ function _eval_master_create_long_answer_element($question_id, $label) {
  * @param $label
  *   The question string
  */
-function _eval_master_create_multiple_choice_element($label) {
+function _eval_master_create_multiple_choice_element($label, $default) {
   $multiple_choice_element = array(
     '#type' => 'radios',
     '#title' => $label,
     '#options' => _eval_master_get_choices(),
     '#required' => FALSE,
+    '#default_value' => $default,
   );
   return $multiple_choice_element;
 }
