@@ -41,7 +41,7 @@ function eval_master_evaluation_form($form_state) {
     $questions = _eval_master_get_questions();
     $answers = _eval_master_get_answers(_eval_master_get_evaluation_unique_id());
     $form = _eval_master_get_evaluation_form($questions, $answers);
-    return null;
+    return $form;
   }
   else {
     $questions = _eval_master_get_questions();
