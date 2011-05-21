@@ -37,7 +37,10 @@ function eval_master_menu () {
 function eval_master_evaluation_form($form_state) {
 
   if (_eval_master_evaluation_already_completed()) {
-    drupal_set_message(t('Vous avez déjà complété l\'évaluation de la formation PHP et Drupal 6.'));
+    //drupal_set_message(t('Vous avez déjà complété l\'évaluation de la formation PHP et Drupal 6.'));
+    $questions = _eval_master_get_questions();
+    $answers = _eval_master_get_answers(_eval_master_get_evaluation_unique_id());
+    $form = _eval_master_get_evaluation_form($questions, $answers);
     return null;
   }
   else {
@@ -96,12 +99,26 @@ function _eval_master_get_questions() {
 }
 
 /**
+ * Get answers from the database
+ */
+function _eval_master_get_answers($unique_id) {
+  $query_answers = 'select * from {eval_master_answer} as eval_master_answer where eval_master_answer.eval_id = (select eval_id from {eval_master_evaluation} as eval_master_evaluation where uid = "' . $unique_id . '")';
+
+  $answers = array();
+  $rows = db_query($query_answers);
+  while ($row = db_fetch_array($rows)) {
+    $answers[$row['question_id']] = $row;
+  }
+
+  return $answers;
+}
+/**
  * Generate the appropriate $form elements based on a mysql result
  *
  * @param $questions
  *   A raw mysql result resource containing information about the questions
  */
-function _eval_master_get_evaluation_form($questions) {
+function _eval_master_get_evaluation_form($questions, $answers = array()) {
   $form = array();
 
   while ($next_question = db_fetch_array($questions)) {
@@ -112,6 +129,7 @@ function _eval_master_get_evaluation_form($questions) {
         '#collapsible' => TRUE,
         '#collapsed' => FALSE,
         '#tree' => FALSE,
+        '#default_value' => $answers[$next_question['question_id']]['value'],
       );
     }
 
