@@ -168,7 +168,7 @@ function _eval_master_create_long_answer_element($question_id, $label, $default)
     '#type' => 'textarea',
     '#title' => $label,
     '#size' => 60,
-    '#maxlength' => 64,
+    '#maxlength' => 10000,
     '#default_value' => $default,
   );
   return $long_answer_element;
